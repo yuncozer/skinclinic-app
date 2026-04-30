@@ -38,12 +38,25 @@ CREATE TABLE payments (
 );
 
 -- =============================================================================
+-- APP USERS TABLE
+-- =============================================================================
+CREATE TABLE app_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('super_admin', 'admin', 'user')),
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =============================================================================
 -- INDEXES
 -- =============================================================================
 CREATE INDEX idx_procedures_patient_id ON procedures(patient_id);
 CREATE INDEX idx_procedures_procedure_date ON procedures(procedure_date);
 CREATE INDEX idx_payments_procedure_id ON payments(procedure_id);
 CREATE INDEX idx_payments_payment_date ON payments(payment_date);
+CREATE INDEX idx_app_users_email ON app_users(email);
 
 -- =============================================================================
 -- EXAMPLE INSERT QUERIES

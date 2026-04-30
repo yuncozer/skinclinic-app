@@ -19,7 +19,11 @@ type Toast = { type: 'success' | 'error'; message: string };
 
 type User = {
   email: string | null;
+  name: string;
+  role: 'super_admin' | 'admin' | 'user';
 };
+
+type Role = 'super_admin' | 'admin' | 'user';
 
 export default function Dashboard({ user }: { user: User }) {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -139,6 +143,7 @@ export default function Dashboard({ user }: { user: User }) {
             procedureFilter={procedureFilter}
             setProcedureFilter={setProcedureFilter}
             allProcedures={allProcedures}
+            role={user.role}
           />
           
           <ProcedureSection 
@@ -150,6 +155,7 @@ export default function Dashboard({ user }: { user: User }) {
             onCreated={() => selectedPatient && loadProcedures(selectedPatient.id)}
             onDeleted={() => selectedPatient && loadProcedures(selectedPatient.id)}
             showToast={showToast}
+            role={user.role}
           />
         </div>
       </div>
@@ -171,7 +177,8 @@ function PatientSection({
   setSearchTerm,
   procedureFilter,
   setProcedureFilter,
-  allProcedures
+  allProcedures,
+  role
 }: {
   patients: Patient[];
   selectedPatient: Patient | null;
@@ -186,6 +193,7 @@ function PatientSection({
   setSearchTerm: (s: string) => void;
   procedureFilter: string;
   setProcedureFilter: (s: string) => void;
+  role: Role;
   allProcedures: Procedure[];
 }) {
   const [form, setForm] = useState<CreatePatientInput>({ full_name: '', id_number: '', phone: '', email: '', address: '' });
@@ -346,7 +354,8 @@ function ProcedureSection({
   onSelectPatient,
   onCreated,
   onDeleted,
-  showToast
+  showToast,
+  role
 }: {
   patients: Patient[];
   selectedPatient: Patient | null;
@@ -356,6 +365,7 @@ function ProcedureSection({
   onCreated: () => void;
   onDeleted: () => void;
   showToast: (type: 'success' | 'error', message: string) => void;
+  role: Role;
 }) {
   const [form, setForm] = useState<Omit<CreateProcedureInput, 'patient_id'>>({ procedure_name: '', procedure_date: '', total_amount: 0 });
   const [submitting, setSubmitting] = useState(false);
