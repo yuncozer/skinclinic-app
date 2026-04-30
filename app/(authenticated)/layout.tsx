@@ -38,7 +38,7 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-100">
       {/* Sidebar */}
       <div className="h-full">
         <Sidebar user={appUser} />

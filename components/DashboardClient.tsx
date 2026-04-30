@@ -13,6 +13,7 @@ import {
   getPaymentsByProcedure, createPayment, deletePayment,
   type Payment, type CreatePaymentInput
 } from '@/actions/payments';
+import { getStandardProceduresActive, type StandardProcedure } from '@/actions/standardProcedures';
 
 type Toast = { type: 'success' | 'error'; message: string };
 
@@ -35,11 +36,25 @@ export default function Dashboard({ user }: { user: User }) {
   const [toast, setToast] = useState<Toast | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [procedureFilter, setProcedureFilter] = useState('');
+  const [standardProcedures, setStandardProcedures] = useState<StandardProcedure[]>([]);
+  const [loadingStandard, setLoadingStandard] = useState(true);
 
   useEffect(() => {
     loadPatients();
     loadAllProcedures();
+    loadStandardProcedures();
   }, []);
+
+  async function loadStandardProcedures() {
+    try {
+      const data = await getStandardProceduresActive();
+      setStandardProcedures(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingStandard(false);
+    }
+  }
 
   useEffect(() => {
     if (selectedPatient) {
@@ -143,6 +158,7 @@ export default function Dashboard({ user }: { user: User }) {
           />
           
           <ProcedureSection 
+            standardProcedures={standardProcedures}
             patients={patients}
             selectedPatient={selectedPatient}
             procedures={procedures}
@@ -339,9 +355,8 @@ function PatientSection({
   );
 }
 
-const DEFAULT_PROCEDURES = ['Botox', 'Limpieza Facial', 'Péptidos'];
-
 function ProcedureSection({
+  standardProcedures,
   patients,
   selectedPatient,
   procedures,
@@ -352,6 +367,7 @@ function ProcedureSection({
   showToast,
   role
 }: {
+  standardProcedures: StandardProcedure[];
   patients: Patient[];
   selectedPatient: Patient | null;
   procedures: Procedure[];
@@ -368,38 +384,31 @@ function ProcedureSection({
   const [procedurePayments, setProcedurePayments] = useState<Record<string, Payment[]>>({});
   const [paymentForm, setPaymentForm] = useState<Omit<CreatePaymentInput, 'procedure_id'>>({ amount: 0, payment_date: '', notes: '' });
   const [submittingPayment, setSubmittingPayment] = useState(false);
-  const [customProcedures, setCustomProcedures] = useState<string[]>([]);
+  const [customProcedureName, setCustomProcedureName] = useState('');
   const [isCustomProcedure, setIsCustomProcedure] = useState(false);
-  const [newCustomProcedure, setNewCustomProcedure] = useState('');
 
-  const allProcedures = [...DEFAULT_PROCEDURES, ...customProcedures];
-
-  useEffect(() => {
-    const stored = localStorage.getItem('customProcedures');
-    if (stored) {
-      setCustomProcedures(JSON.parse(stored));
-    }
-  }, []);
+  const standardProcedureNames = standardProcedures.map(p => p.name);
 
   function handleSelectProcedure(value: string) {
     if (value === 'custom') {
       setIsCustomProcedure(true);
-      setForm({ ...form, procedure_name: '' });
+      setForm({ procedure_name: '', procedure_date: '', total_amount: 0 });
     } else {
       setIsCustomProcedure(false);
-      setForm({ ...form, procedure_name: value });
+      const proc = standardProcedures.find(p => p.name === value);
+      setForm({ 
+        procedure_name: value, 
+        procedure_date: form.procedure_date, 
+        total_amount: proc ? proc.default_price : 0 
+      });
     }
   }
 
   function addCustomProcedure() {
-    if (newCustomProcedure.trim() && !allProcedures.includes(newCustomProcedure.trim())) {
-      const updated = [...customProcedures, newCustomProcedure.trim()];
-      setCustomProcedures(updated);
-      localStorage.setItem('customProcedures', JSON.stringify(updated));
-      setForm({ ...form, procedure_name: newCustomProcedure.trim() });
-      setNewCustomProcedure('');
+    if (customProcedureName.trim()) {
+      setForm({ ...form, procedure_name: customProcedureName.trim() });
+      setCustomProcedureName('');
       setIsCustomProcedure(false);
-      showToast('success', 'Procedimiento personalizado agregado');
     }
   }
 
@@ -506,7 +515,7 @@ function ProcedureSection({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Seleccionar Procedimiento</option>
-              {allProcedures.map(pr => (
+              {standardProcedureNames.map(pr => (
                 <option key={pr} value={pr}>{pr}</option>
               ))}
               <option value="custom">+ Agregar personalizado</option>
@@ -516,34 +525,48 @@ function ProcedureSection({
           <div className="space-y-2">
             <input 
               placeholder="Nombre del procedimiento"
-              value={newCustomProcedure}
-              onChange={e => setNewCustomProcedure(e.target.value)}
+              value={customProcedureName}
+              onChange={e => setCustomProcedureName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             />
-            <div className="flex gap-2">
-              <button 
-                type="button"
-                onClick={addCustomProcedure}
-                disabled={!newCustomProcedure.trim()}
-                className="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
-              >
-                Agregar
-              </button>
-              <button 
-                type="button"
-                onClick={() => { setIsCustomProcedure(false); setNewCustomProcedure(''); }}
-                className="flex-1 bg-gray-400 text-white py-2 rounded-md hover:bg-gray-500 text-sm"
-              >
-                Cancelar
-              </button>
-            </div>
+            <button 
+              type="button"
+              onClick={addCustomProcedure}
+              disabled={!customProcedureName.trim()}
+              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
+            >
+              Usar como personalizado
+            </button>
           </div>
         )}
         
         {form.procedure_name && (
           <>
             <input type="date" value={form.procedure_date} onChange={e => setForm({ ...form, procedure_date: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
-            <input placeholder="Monto total" type="number" step="0.01" value={form.total_amount || ''} onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
+            {!isCustomProcedure && standardProcedures.find(p => p.name === form.procedure_name) ? (
+              <div className="space-y-1">
+                <label className="text-xs text-gray-500">Precio base: ${standardProcedures.find(p => p.name === form.procedure_name)?.default_price.toFixed(2)}</label>
+                <input 
+                  placeholder="Monto total (editable)" 
+                  type="number" 
+                  step="0.01" 
+                  value={form.total_amount || ''} 
+                  onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                  required 
+                />
+              </div>
+            ) : (
+              <input 
+                placeholder="Monto total" 
+                type="number" 
+                step="0.01" 
+                value={form.total_amount || ''} 
+                onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })} 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                required 
+              />
+            )}
           </>
         )}
         <button type="submit" disabled={submitting || !selectedPatient || !form.procedure_name || !form.procedure_date || !form.total_amount} className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50">

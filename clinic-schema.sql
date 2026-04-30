@@ -38,6 +38,17 @@ CREATE TABLE payments (
 );
 
 -- =============================================================================
+-- STANDARD PROCEDURES TABLE
+-- =============================================================================
+CREATE TABLE standard_procedures (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL UNIQUE,
+    default_price NUMERIC NOT NULL,
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =============================================================================
 -- APP USERS TABLE
 -- =============================================================================
 CREATE TABLE app_users (
@@ -130,3 +141,26 @@ FROM patients p
 LEFT JOIN procedures pr ON p.id = pr.patient_id
 GROUP BY p.id, p.full_name, p.id_number, p.phone
 ORDER BY remaining_balance DESC;
+
+-- =============================================================================
+-- STANDARD PROCEDURES SEED DATA
+-- =============================================================================
+INSERT INTO standard_procedures (name, default_price) VALUES
+    ('Consulta acne', 0),
+    ('Consulta calidad de la piel', 0),
+    ('Consulta capilar', 0),
+    ('Limpieza facial', 0),
+    ('Tratamiento dermapen', 0),
+    ('Peeling quimico', 0),
+    ('Botox', 0),
+    ('Acido hialuronico', 0),
+    ('Bioestimuladores', 0),
+    ('Plasma capilar', 0),
+    ('Dutexone', 0),
+    ('Sueroterapia', 0),
+    ('Cauterizacion de verrugas', 0),
+    ('NAD', 0),
+    ('Face Nade', 0),
+    ('Peptidos', 0),
+    ('PDRN', 0),
+    ('Productos Skin care', 0);
