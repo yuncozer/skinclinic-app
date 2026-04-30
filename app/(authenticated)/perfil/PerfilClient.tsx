@@ -22,7 +22,7 @@ const roleLabels = {
 export default function PerfilClient({ user }: { user: User }) {
   const router = useRouter();
   const [toast, setToast] = useState<Toast | null>(null);
-  
+
   const [nameForm, setNameForm] = useState({ name: user.name, submitting: false });
   const [passwordForm, setPasswordForm] = useState({
     new: '',
@@ -77,7 +77,6 @@ export default function PerfilClient({ user }: { user: User }) {
       setPasswordForm(s => ({ ...s, submitting: false }));
     }
   }
-
   return (
     <>
       {toast && (
@@ -92,7 +91,7 @@ export default function PerfilClient({ user }: { user: User }) {
         <div className="space-y-8">
           <div className="card p-6">
             <h2 className="text-lg font-medium text-slate-800 mb-4">Información Personal</h2>
-            
+
             <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
               <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
                 <span className="text-white text-2xl font-semibold">
@@ -100,64 +99,64 @@ export default function PerfilClient({ user }: { user: User }) {
                 </span>
               </div>
               <div>
-                  <p className="text-sm text-slate-500">Rol: {roleLabels[user.role]}</p>
-                  <p className="text-sm text-slate-500">{user.email}</p>
-                </div>
+                <p className="text-sm text-slate-500">Rol: {roleLabels[user.role]}</p>
+                <p className="text-sm text-slate-500">{user.email}</p>
               </div>
+            </div>
 
-              <form onSubmit={handleNameSubmit} className="flex gap-3">
+            <form onSubmit={handleNameSubmit} className="flex gap-3">
+              <input
+                type="text"
+                value={nameForm.name}
+                onChange={e => setNameForm(s => ({ ...s, name: e.target.value }))}
+                className="input flex-1"
+                placeholder="Tu nombre"
+              />
+              <button
+                type="submit"
+                disabled={nameForm.submitting || nameForm.name === user.name}
+                className="btn-primary"
+              >
+                {nameForm.submitting ? 'Guardando...' : 'Guardar'}
+              </button>
+            </form>
+          </div>
+
+          <div className="card p-6">
+            <h2 className="text-lg font-medium text-slate-800 mb-4">Cambiar Contraseña</h2>
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <label className="label">Nueva Contraseña</label>
                 <input
-                  type="text"
-                  value={nameForm.name}
-                  onChange={e => setNameForm(s => ({ ...s, name: e.target.value }))}
-                  className="input flex-1"
-                  placeholder="Tu nombre"
+                  type="password"
+                  value={passwordForm.new}
+                  onChange={e => setPasswordForm(s => ({ ...s, new: e.target.value }))}
+                  className="input"
+                  placeholder="Ingresa la nueva contraseña"
                 />
-                <button
-                  type="submit"
-                  disabled={nameForm.submitting || nameForm.name === user.name}
-                  className="btn-primary"
-                >
-                  {nameForm.submitting ? 'Guardando...' : 'Guardar'}
-                </button>
-              </form>
-            </div>
-
-            <div className="card p-6">
-              <h2 className="text-lg font-medium text-slate-800 mb-4">Cambiar Contraseña</h2>
-              
-              <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                <div>
-                  <label className="label">Nueva Contraseña</label>
-                  <input
-                    type="password"
-                    value={passwordForm.new}
-                    onChange={e => setPasswordForm(s => ({ ...s, new: e.target.value }))}
-                    className="input"
-                    placeholder="Ingresa la nueva contraseña"
-                  />
-                </div>
-                <div>
-                  <label className="label">Confirmar Nueva Contraseña</label>
-                  <input
-                    type="password"
-                    value={passwordForm.confirm}
-                    onChange={e => setPasswordForm(s => ({ ...s, confirm: e.target.value }))}
-                    className="input"
-                    placeholder="Confirma la nueva contraseña"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={passwordForm.submitting || !passwordForm.new || !passwordForm.confirm}
-                  className="btn-primary w-full"
-                >
-                  {passwordForm.submitting ? 'Actualizando...' : 'Cambiar Contraseña'}
-                </button>
-              </form>
-            </div>
+              </div>
+              <div>
+                <label className="label">Confirmar Nueva Contraseña</label>
+                <input
+                  type="password"
+                  value={passwordForm.confirm}
+                  onChange={e => setPasswordForm(s => ({ ...s, confirm: e.target.value }))}
+                  className="input"
+                  placeholder="Confirma la nueva contraseña"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={passwordForm.submitting || !passwordForm.new || !passwordForm.confirm}
+                className="btn-primary w-full"
+              >
+                {passwordForm.submitting ? 'Actualizando...' : 'Cambiar Contraseña'}
+              </button>
+            </form>
           </div>
         </div>
+      </div>
     </>
   );
 }

@@ -6,6 +6,8 @@ import { signOutClient } from '@/actions/auth';
 type User = {
   name: string;
   role: 'super_admin' | 'admin' | 'user';
+  id: string;
+  email: string;
 };
 
 const roleLabels = {
@@ -28,7 +30,7 @@ export default function Header({ user }: { user: User }) {
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
           <span className="text-white font-semibold">
-            {user.name.charAt(0).toUpperCase()}
+            {user?.name?.charAt(0).toUpperCase()}
           </span>
         </div>
         <div>

@@ -195,7 +195,7 @@ function PatientSection({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<UpdatePatientInput>({});
   const [submitting, setSubmitting] = useState(false);
-  const [showForm, setShowForm] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
   const uniqueProcedures = useMemo(() => {
     const names = new Set(allProcedures.map(p => p.procedure_name));
@@ -257,7 +257,7 @@ function PatientSection({
           onClick={() => setShowForm(!showForm)}
           className="text-sm text-blue-600 hover:underline"
         >
-          {showForm ? 'Ocultar formulario' : 'Mostrar formulario'}
+          {showForm ? 'Ocultar formulario' : 'Agregar Paciente'}
         </button>
       </div>
 

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
+import { getUserByEmail } from '@/actions/users';
 
 export default async function AuthenticatedLayout({
   children,
@@ -19,7 +20,7 @@ export default async function AuthenticatedLayout({
         getAll() {
           return cookieStore.getAll();
         },
-        setAll() {},
+        setAll() { },
       },
     }
   );
@@ -30,20 +31,28 @@ export default async function AuthenticatedLayout({
     redirect('/login');
   }
 
-  const { data: appUser } = await supabase
-    .from('app_users')
-    .select('name, role')
-    .eq('id', user.id)
-    .single();
+  const appUser = await getUserByEmail(user.email!);
 
-  const userData = appUser || { name: user.email?.split('@')[0] || 'Usuario', role: 'user' as const };
+  if (!appUser) {
+    redirect('/login');
+  }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar user={userData} />
-      <div className="flex-1 flex flex-col">
-        <Header user={userData} />
-        <main className="flex-1 p-6">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      {/* Sidebar */}
+      <div className="h-full">
+        <Sidebar user={appUser} />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col h-full">
+        {/* Header fijo */}
+        <div className="shrink-0">
+          <Header user={appUser} />
+        </div>
+
+        {/* Scroll SOLO aquí */}
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
