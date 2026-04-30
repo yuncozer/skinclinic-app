@@ -13,8 +13,6 @@ import {
   getPaymentsByProcedure, createPayment, deletePayment,
   type Payment, type CreatePaymentInput
 } from '@/actions/payments';
-import Sidebar from './Sidebar';
-import Header from './Header';
 
 type Toast = { type: 'success' | 'error'; message: string };
 
@@ -116,7 +114,7 @@ export default function Dashboard({ user }: { user: User }) {
   }, [patients, searchTerm, procedureFilter, allProcedures]);
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <>
       {toast && (
         <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
           toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
@@ -125,10 +123,7 @@ export default function Dashboard({ user }: { user: User }) {
         </div>
       )}
 
-      <Sidebar user={{ name: user.name, role: user.role }} />
-
-      <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <PatientSection 
             patients={filteredPatients} 
             selectedPatient={selectedPatient}
@@ -159,9 +154,8 @@ export default function Dashboard({ user }: { user: User }) {
             role={user.role}
           />
         </div>
-      </div>
-    </div>
-  );
+      </>
+    );
 }
 
 function PatientSection({ 

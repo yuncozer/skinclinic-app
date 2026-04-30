@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { getUsers, createUser, updateUser, deleteUser, type AppUser, type CreateUserInput } from '@/actions/users';
 import { getUserByEmail } from '@/actions/users';
-import Sidebar from '@/components/Sidebar';
 
 type Toast = { type: 'success' | 'error'; message: string };
 type User = {
@@ -124,7 +123,7 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <>
             {toast && (
                 <div className={`toast ${toast.type === 'success' ? 'toast-success' : 'toast-error'}`}>
                     {toast.message}
@@ -186,9 +185,7 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                 </div>
             )}
 
-            <Sidebar user={{ name: currentUser.name, role: currentUser.role as 'super_admin' | 'admin' | 'user' }} />
-
-            <main className="flex-1 p-8">
+            <main className="p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-semibold text-slate-800">Gestión de Usuarios</h1>
                     <button
@@ -257,12 +254,13 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                     </form>
                 )}
 
-                <div className="card overflow-hidden">
+<div className="card overflow-hidden">
                     {loading ? (
                         <div className="p-8 text-center text-slate-500">Cargando...</div>
                     ) : users.length === 0 ? (
                         <div className="p-8 text-center text-slate-500">No hay usuarios registrados</div>
                     ) : (
+                        <>
                         <table className="w-full">
                             <thead className="bg-slate-50 border-b border-slate-200">
                                 <tr>
@@ -333,9 +331,10 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                                 ))}
                             </tbody>
                         </table>
+                        </>
                     )}
                 </div>
             </main>
-        </div>
+        </>
     );
 }

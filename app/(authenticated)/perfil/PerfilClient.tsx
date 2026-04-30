@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateUserName, updateUserPassword } from '@/actions/users';
-import { signOutClient } from '@/actions/auth';
-import Sidebar from '@/components/Sidebar';
 
 type User = {
   email: string;
@@ -80,41 +78,28 @@ export default function PerfilClient({ user }: { user: User }) {
     }
   }
 
-  async function handleLogout() {
-    try {
-      await signOutClient();
-      router.push('/login');
-      router.refresh();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <>
       {toast && (
         <div className={`toast ${toast.type === 'success' ? 'toast-success' : 'toast-error'}`}>
           {toast.message}
         </div>
       )}
 
-      <Sidebar user={{ name: user.name, role: user.role }} />
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-semibold text-slate-800 mb-8">Mi Perfil</h1>
 
-      <main className="flex-1 p-8">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-2xl font-semibold text-slate-800 mb-8">Mi Perfil</h1>
-
-          <div className="space-y-8">
-            <div className="card p-6">
-              <h2 className="text-lg font-medium text-slate-800 mb-4">Información Personal</h2>
-              
-              <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
-                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
-                  <span className="text-white text-2xl font-semibold">
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
+        <div className="space-y-8">
+          <div className="card p-6">
+            <h2 className="text-lg font-medium text-slate-800 mb-4">Información Personal</h2>
+            
+            <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
+              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
+                <span className="text-white text-2xl font-semibold">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div>
                   <p className="text-sm text-slate-500">Rol: {roleLabels[user.role]}</p>
                   <p className="text-sm text-slate-500">{user.email}</p>
                 </div>
@@ -171,19 +156,8 @@ export default function PerfilClient({ user }: { user: User }) {
                 </button>
               </form>
             </div>
-
-            <div className="card p-6">
-              <h2 className="text-lg font-medium text-slate-800 mb-4">Sesión</h2>
-              <button
-                onClick={handleLogout}
-                className="btn-secondary text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
-              >
-                Cerrar Sesión
-              </button>
-            </div>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }
