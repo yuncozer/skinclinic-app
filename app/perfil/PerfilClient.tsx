@@ -27,7 +27,6 @@ export default function PerfilClient({ user }: { user: User }) {
   
   const [nameForm, setNameForm] = useState({ name: user.name, submitting: false });
   const [passwordForm, setPasswordForm] = useState({
-    current: '',
     new: '',
     confirm: '',
     submitting: false
@@ -57,7 +56,7 @@ export default function PerfilClient({ user }: { user: User }) {
 
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) {
+    if (!passwordForm.new || !passwordForm.confirm) {
       showToast('error', 'Todos los campos son requeridos');
       return;
     }
@@ -71,8 +70,8 @@ export default function PerfilClient({ user }: { user: User }) {
     }
     setPasswordForm(s => ({ ...s, submitting: true }));
     try {
-      await updateUserPassword(user.email, passwordForm.current, passwordForm.new);
-      setPasswordForm({ current: '', new: '', confirm: '', submitting: false });
+      await updateUserPassword(user.email, '', passwordForm.new);
+      setPasswordForm({ new: '', confirm: '', submitting: false });
       showToast('success', 'Contraseña actualizada correctamente');
     } catch (err) {
       showToast('error', err instanceof Error ? err.message : 'Error al actualizar contraseña');
@@ -144,16 +143,6 @@ export default function PerfilClient({ user }: { user: User }) {
               
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <label className="label">Contraseña Actual</label>
-                  <input
-                    type="password"
-                    value={passwordForm.current}
-                    onChange={e => setPasswordForm(s => ({ ...s, current: e.target.value }))}
-                    className="input"
-                    placeholder="Ingresa tu contraseña actual"
-                  />
-                </div>
-                <div>
                   <label className="label">Nueva Contraseña</label>
                   <input
                     type="password"
@@ -175,7 +164,7 @@ export default function PerfilClient({ user }: { user: User }) {
                 </div>
                 <button
                   type="submit"
-                  disabled={passwordForm.submitting || !passwordForm.current || !passwordForm.new || !passwordForm.confirm}
+                  disabled={passwordForm.submitting || !passwordForm.new || !passwordForm.confirm}
                   className="btn-primary w-full"
                 >
                   {passwordForm.submitting ? 'Actualizando...' : 'Cambiar Contraseña'}

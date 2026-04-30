@@ -175,28 +175,23 @@ export async function updateUserName(userId: string, name: string): Promise<AppU
 
 export async function updateUserPassword(
   userEmail: string,
-  currentPassword: string,
+  _currentPassword: string,
   newPassword: string
 ): Promise<void> {
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email: userEmail,
-    password: currentPassword,
-  });
+  const { data: users, error: listError } = await supabase.auth.admin.listUsers();
 
-  if (signInError) {
-    throw new Error('La contraseña actual es incorrecta');
+  if (listError) {
+    throw new Error('Error al obtener usuarios');
   }
 
-  const { data: { user: authUser }, error: updateError } = await supabase.auth.admin.getUserById(
-    userEmail
-  );
+  const user = users.users.find(u => u.email === userEmail);
 
-  if (updateError || !authUser) {
-    throw new Error('No se pudo obtener el ID del usuario');
+  if (!user) {
+    throw new Error('Usuario no encontrado');
   }
 
   const { error: setPasswordError } = await supabase.auth.admin.updateUserById(
-    authUser.id,
+    user.id,
     { password: newPassword }
   );
 
