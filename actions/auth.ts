@@ -16,7 +16,7 @@ export async function signIn(email: string, password: string) {
     throw new Error(error.message);
   }
 
-  revalidatePath('/');
+  redirect('/');
 }
 
 export async function signOutClient() {
@@ -28,5 +28,5 @@ export async function signOutClient() {
     throw new Error(error.message);
   }
 
-  revalidatePath('/');
+  redirect('/');
 }
