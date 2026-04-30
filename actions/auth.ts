@@ -1,10 +1,12 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
-import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/superbase-server';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export async function signIn(email: string, password: string) {
+  const supabase = await createClient();
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -17,18 +19,14 @@ export async function signIn(email: string, password: string) {
   revalidatePath('/');
 }
 
-export async function signOut() {
+export async function signOutClient() {
+  const supabase = await createClient();
+  
   const { error } = await supabase.auth.signOut();
   
   if (error) {
     throw new Error(error.message);
   }
 
-  revalidatePath('/login');
-  redirect('/login');
-}
-
-export async function getSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
+  revalidatePath('/');
 }

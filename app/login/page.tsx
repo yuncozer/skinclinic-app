@@ -15,22 +15,25 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    console.log('Submit start');
 
     try {
+      console.log('Before signIn');
       await signIn(email, password);
-      router.push('/');
+      console.log('After signIn');
+
+      router.replace('/');
       router.refresh();
     } catch (err: any) {
-      if (err?.digest?.includes('NEXT_REDIRECT')) {
-        return;
-      }
-      setError(err instanceof Error ? err.message : 'Failed to sign in');
+      setError(err.message)
+      console.log('Error caught:', err);
+    } finally {
+      console.log('Finally executed');
       setLoading(false);
     }
   }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-400 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">SkinClinic</h1>

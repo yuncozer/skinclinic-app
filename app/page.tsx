@@ -13,5 +13,5 @@ export default async function Page() {
     redirect('/login');
   }
 
-  return <DashboardClient />;
+  return <DashboardClient user={{ email: user.email ?? null }} />;
 }

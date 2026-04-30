@@ -13,10 +13,15 @@ import {
   getPaymentsByProcedure, createPayment, deletePayment,
   type Payment, type CreatePaymentInput
 } from '@/actions/payments';
+import Header from './Header';
 
 type Toast = { type: 'success' | 'error'; message: string };
 
-export default function Dashboard() {
+type User = {
+  email: string | null;
+};
+
+export default function Dashboard({ user }: { user: User }) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [allProcedures, setAllProcedures] = useState<Procedure[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -106,11 +111,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-800">SkinClinic</h1>
-        </div>
-      </header>
+      <Header user={user} />
 
       <div className="max-w-6xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
