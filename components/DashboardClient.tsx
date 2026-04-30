@@ -27,6 +27,8 @@ export default function Dashboard({ user }: { user: User }) {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingProcedures, setLoadingProcedures] = useState(false);
+  const [loadingSearch, setLoadingSearch] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [procedureFilter, setProcedureFilter] = useState('');
@@ -69,11 +71,14 @@ export default function Dashboard({ user }: { user: User }) {
   }
 
   async function loadProcedures(patientId: string) {
+    setLoadingProcedures(true);
     try {
       const data = await getProceduresByPatient(patientId);
       setProcedures(data);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoadingProcedures(false);
     }
   }
 
@@ -81,28 +86,32 @@ export default function Dashboard({ user }: { user: User }) {
     let result = patients;
     
     if (searchTerm) {
+      setLoadingSearch(true);
       const term = searchTerm.toLowerCase();
       result = result.filter(p => 
         p.full_name.toLowerCase().includes(term) ||
         p.id_number.toLowerCase().includes(term) ||
         p.phone.includes(term)
       );
+      setTimeout(() => setLoadingSearch(false), 300);
     }
 
     if (procedureFilter) {
+      setLoadingSearch(true);
       const patientsWithProcedure = new Set(
         allProcedures
           .filter(pr => pr.procedure_name.toLowerCase().includes(procedureFilter.toLowerCase()))
           .map(pr => pr.patient_id)
       );
       result = result.filter(p => patientsWithProcedure.has(p.id));
+      setTimeout(() => setLoadingSearch(false), 300);
     }
 
     return result;
   }, [patients, searchTerm, procedureFilter, allProcedures]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-400 to-indigo-100">
       {toast && (
         <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
           toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
@@ -123,6 +132,7 @@ export default function Dashboard({ user }: { user: User }) {
             onUpdated={loadPatients}
             onDeleted={loadPatients}
             loading={loading}
+            loadingSearch={loadingSearch}
             showToast={showToast}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -135,6 +145,7 @@ export default function Dashboard({ user }: { user: User }) {
             patients={patients}
             selectedPatient={selectedPatient}
             procedures={procedures}
+            loadingProcedures={loadingProcedures}
             onSelectPatient={setSelectedPatient}
             onCreated={() => selectedPatient && loadProcedures(selectedPatient.id)}
             onDeleted={() => selectedPatient && loadProcedures(selectedPatient.id)}
@@ -154,6 +165,7 @@ function PatientSection({
   onUpdated,
   onDeleted,
   loading,
+  loadingSearch,
   showToast,
   searchTerm,
   setSearchTerm,
@@ -168,6 +180,7 @@ function PatientSection({
   onUpdated: () => void;
   onDeleted: () => void;
   loading: boolean;
+  loadingSearch: boolean;
   showToast: (type: 'success' | 'error', message: string) => void;
   searchTerm: string;
   setSearchTerm: (s: string) => void;
@@ -281,8 +294,11 @@ function PatientSection({
       )}
 
       <div className="max-h-80 overflow-y-auto border-t pt-4">
-        {loading ? (
-          <p className="text-gray-500 text-sm">Cargando...</p>
+        {(loading || loadingSearch) ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-500">Buscando...</span>
+          </div>
         ) : patients.length === 0 ? (
           <p className="text-gray-500 text-sm">No hay pacientes</p>
         ) : (
@@ -326,6 +342,7 @@ function ProcedureSection({
   patients,
   selectedPatient,
   procedures,
+  loadingProcedures,
   onSelectPatient,
   onCreated,
   onDeleted,
@@ -334,6 +351,7 @@ function ProcedureSection({
   patients: Patient[];
   selectedPatient: Patient | null;
   procedures: Procedure[];
+  loadingProcedures: boolean;
   onSelectPatient: (p: Patient | null) => void;
   onCreated: () => void;
   onDeleted: () => void;
@@ -529,11 +547,17 @@ function ProcedureSection({
       </form>
 
       <div className="max-h-96 overflow-y-auto border-t pt-4">
-        {!selectedPatient ? (<p className="text-gray-500 text-sm">Selecciona un paciente</p>) : procedures.length === 0 ? (<p className="text-gray-500 text-sm">No hay procedimientos</p>) : (
+        {!selectedPatient ? (<p className="text-gray-500 text-sm">Selecciona un paciente</p>) : loadingProcedures ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-500">Cargando...</span>
+          </div>
+        ) : procedures.length === 0 ? (<p className="text-gray-500 text-sm">No hay procedimientos</p>) : (
           <ul className="space-y-3">
             {procedures.map(pr => {
               const remainingAmount = pr.total_amount - (pr.amount_paid || 0);
               const isPaid = remainingAmount <= 0;
+              const isOverpaid = remainingAmount < 0;
               return (
                 <li key={pr.id} className="p-3 border border-gray-200 rounded-md text-sm">
                   <div className="flex justify-between items-start">
@@ -547,9 +571,13 @@ function ProcedureSection({
                         <span className="text-gray-600 font-medium">${pr.total_amount.toFixed(2)}</span>
                         <span className="text-gray-400">|</span>
                         <span className="text-green-600">Pagado: ${(pr.amount_paid || 0).toFixed(2)}</span>
-                        <span className={`ml-1 ${isPaid ? 'text-green-600' : 'text-red-600'}`}>
-                          {isPaid ? '(Cancelado)' : `Pendiente: $${remainingAmount.toFixed(2)}`}
-                        </span>
+                        {isOverpaid ? (
+                          <span className="text-green-600 font-medium ml-1">(Saldo a favor: ${Math.abs(remainingAmount).toFixed(2)})</span>
+                        ) : isPaid ? (
+                          <span className="text-green-600 ml-1">(Cancelado)</span>
+                        ) : (
+                          <span className="text-red-600 ml-1">Pendiente: ${remainingAmount.toFixed(2)}</span>
+                        )}
                       </div>
                     </div>
                     <button onClick={() => handleDelete(pr.id)} className="text-red-600 hover:underline text-xs ml-2">Eliminar</button>
