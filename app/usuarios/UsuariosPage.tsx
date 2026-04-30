@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getUsers, createUser, updateUser, deleteUser, type AppUser, type CreateUserInput } from '@/actions/users';
 import { getUserByEmail } from '@/actions/users';
-import Header from '@/components/Header';
-import { supabase } from '@/lib/supabase';
+import Sidebar from '@/components/Sidebar';
 
 type Toast = { type: 'success' | 'error'; message: string };
 type User = {
@@ -23,6 +22,7 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
     const [form, setForm] = useState<CreateUserInput>({ email: '', name: '', role: 'user', password: '' });
     const [submitting, setSubmitting] = useState(false);
     const [newUserCredentials, setNewUserCredentials] = useState<{ email: string; password: string } | null>(null);
+    const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
     useEffect(() => {
         loadUsers();
@@ -86,6 +86,17 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
             showToast('success', 'Usuario eliminado exitosamente');
         } catch (err) {
             showToast('error', err instanceof Error ? err.message : 'Error al eliminar usuario');
+        }
+    }
+
+    async function handleRoleChange(user: AppUser, newRole: 'super_admin' | 'admin' | 'user') {
+        try {
+            await updateUser(user.id, { role: newRole });
+            setEditingUserId(null);
+            loadUsers();
+            showToast('success', 'Rol actualizado correctamente');
+        } catch (err) {
+            showToast('error', err instanceof Error ? err.message : 'Error al actualizar rol');
         }
     }
 
@@ -175,9 +186,9 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                 </div>
             )}
 
-            <Header user={{ email: currentUser.email, name: currentUser.name, role: currentUser.role as 'super_admin' | 'admin' | 'user' }} />
+            <Sidebar user={{ name: currentUser.name, role: currentUser.role as 'super_admin' | 'admin' | 'user' }} />
 
-            <main className="max-w-4xl mx-auto px-4 py-8">
+            <main className="flex-1 p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-semibold text-slate-800">Gestión de Usuarios</h1>
                     <button
@@ -268,9 +279,21 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                                         <td className="px-4 py-3 text-sm text-slate-800">{user.name}</td>
                                         <td className="px-4 py-3 text-sm text-slate-600">{user.email}</td>
                                         <td className="px-4 py-3">
-                                            <span className={`text-xs px-2 py-1 rounded-full ${roleColors[user.role]}`}>
-                                                {roleLabels[user.role]}
-                                            </span>
+                                            {editingUserId === user.id ? (
+                                                <select
+                                                    value={user.role}
+                                                    onChange={(e) => handleRoleChange(user, e.target.value as 'super_admin' | 'admin' | 'user')}
+                                                    className="input text-sm py-1"
+                                                >
+                                                    <option value="user">Usuario</option>
+                                                    <option value="admin">Administrador</option>
+                                                    <option value="super_admin">Super Admin</option>
+                                                </select>
+                                            ) : (
+                                                <span className={`text-xs px-2 py-1 rounded-full ${roleColors[user.role]}`}>
+                                                    {roleLabels[user.role]}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className={`text-xs px-2 py-1 rounded-full ${user.active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
@@ -278,6 +301,21 @@ export default function UsersPage({ user: currentUser }: { user: User }) {
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-right">
+                                            {editingUserId === user.id ? (
+                                                <button
+                                                    onClick={() => setEditingUserId(null)}
+                                                    className="text-sm text-slate-500 hover:text-slate-700 mr-2"
+                                                >
+                                                    Cancelar
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setEditingUserId(user.id)}
+                                                    className="text-sm text-slate-600 hover:text-slate-800 mr-2"
+                                                >
+                                                    Editar Rol
+                                                </button>
+                                            )}
                                             <button
                                                 onClick={() => handleToggleActive(user)}
                                                 className="text-sm text-blue-600 hover:text-blue-800 mr-3"

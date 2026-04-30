@@ -1,7 +1,9 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
+
+const supabase = supabaseAdmin;
 
 export type AppUser = {
   id: string;
@@ -153,4 +155,69 @@ export async function deleteUser(id: string): Promise<void> {
   }
 
   revalidatePath('/');
+}
+
+export async function updateUserName(userId: string, name: string): Promise<AppUser> {
+  const { data: user, error } = await supabase
+    .from('app_users')
+    .update({ name })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update user name: ${error.message}`);
+  }
+
+  revalidatePath('/');
+  return user as AppUser;
+}
+
+export async function updateUserPassword(
+  userEmail: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: userEmail,
+    password: currentPassword,
+  });
+
+  if (signInError) {
+    throw new Error('La contraseña actual es incorrecta');
+  }
+
+  const { data: { user: authUser }, error: updateError } = await supabase.auth.admin.getUserById(
+    userEmail
+  );
+
+  if (updateError || !authUser) {
+    throw new Error('No se pudo obtener el ID del usuario');
+  }
+
+  const { error: setPasswordError } = await supabase.auth.admin.updateUserById(
+    authUser.id,
+    { password: newPassword }
+  );
+
+  if (setPasswordError) {
+    throw new Error(`Error al actualizar la contraseña: ${setPasswordError.message}`);
+  }
+
+  revalidatePath('/');
+}
+
+export async function getUserById(id: string): Promise<AppUser | null> {
+  const { data, error } = await supabase
+    .from('app_users')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGR116') return null;
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+
+  return data as AppUser;
 }
