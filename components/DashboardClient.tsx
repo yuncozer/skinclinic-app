@@ -111,7 +111,7 @@ export default function Dashboard({ user }: { user: User }) {
   }, [patients, searchTerm, procedureFilter, allProcedures]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-400 to-indigo-100">
+    <div className="min-h-screen bg-slate-50">
       {toast && (
         <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
           toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
