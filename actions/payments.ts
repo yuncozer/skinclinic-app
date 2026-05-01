@@ -19,6 +19,26 @@ export type CreatePaymentInput = {
   notes?: string;
 };
 
+export async function getTotalPaymentsByPatient(patientId: string): Promise<number> {
+  const { data: procedures, error } = await supabase
+    .from('procedures')
+    .select('id')
+    .eq('patient_id', patientId);
+  
+  if (error || !procedures) return 0;
+  
+  const procedureIds = procedures.map(p => p.id);
+  
+  const { data: payments, error: paymentsError } = await supabase
+    .from('payments')
+    .select('amount')
+    .in('procedure_id', procedureIds);
+  
+  if (paymentsError || !payments) return 0;
+  
+  return payments.reduce((sum, p) => sum + Number(p.amount), 0);
+}
+
 export async function createPayment(data: CreatePaymentInput): Promise<Payment> {
   const { data: payment, error } = await supabase
     .from('payments')

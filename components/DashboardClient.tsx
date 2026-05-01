@@ -9,8 +9,8 @@ import {
   getProceduresByPatient, createProcedure, deleteProcedure,
   type Procedure, type CreateProcedureInput
 } from '@/actions/procedures';
-import {
-  getPaymentsByProcedure, createPayment, deletePayment,
+import { 
+  getPaymentsByProcedure, createPayment, deletePayment, getTotalPaymentsByPatient,
   type Payment, type CreatePaymentInput
 } from '@/actions/payments';
 import { getStandardProceduresActive, type StandardProcedure } from '@/actions/standardProcedures';
@@ -38,6 +38,7 @@ export default function Dashboard({ user }: { user: User }) {
   const [procedureFilter, setProcedureFilter] = useState('');
   const [standardProcedures, setStandardProcedures] = useState<StandardProcedure[]>([]);
   const [loadingStandard, setLoadingStandard] = useState(true);
+  const [totalPaidReal, setTotalPaidReal] = useState(0);
 
   useEffect(() => {
     loadPatients();
@@ -91,8 +92,12 @@ export default function Dashboard({ user }: { user: User }) {
   async function loadProcedures(patientId: string) {
     setLoadingProcedures(true);
     try {
-      const data = await getProceduresByPatient(patientId);
+      const [data, totalPaid] = await Promise.all([
+        getProceduresByPatient(patientId),
+        getTotalPaymentsByPatient(patientId)
+      ]);
       setProcedures(data);
+      setTotalPaidReal(totalPaid);
     } catch (e) {
       console.error(e);
     } finally {
@@ -156,11 +161,12 @@ export default function Dashboard({ user }: { user: User }) {
           role={user.role}
         />
 
-        <ProcedureSection
+<ProcedureSection 
           standardProcedures={standardProcedures}
           patients={patients}
           selectedPatient={selectedPatient}
           procedures={procedures}
+          totalPaidReal={totalPaidReal}
           loadingProcedures={loadingProcedures}
           onSelectPatient={setSelectedPatient}
           onCreated={() => selectedPatient && loadProcedures(selectedPatient.id)}
@@ -359,6 +365,7 @@ function ProcedureSection({
   patients,
   selectedPatient,
   procedures,
+  totalPaidReal,
   loadingProcedures,
   onSelectPatient,
   onCreated,
@@ -370,6 +377,7 @@ function ProcedureSection({
   patients: Patient[];
   selectedPatient: Patient | null;
   procedures: Procedure[];
+  totalPaidReal: number;
   loadingProcedures: boolean;
   onSelectPatient: (p: Patient | null) => void;
   onCreated: () => void;
@@ -522,8 +530,7 @@ function ProcedureSection({
   }
 
   const total = procedures.reduce((acc, pr) => acc + pr.total_amount, 0);
-  const paid = procedures.reduce((acc, pr) => acc + (pr.amount_paid || 0), 0);
-  const remaining = total - paid;
+  const remaining = total - totalPaidReal;
   const hasDebt = remaining > 0;
   const positiveValue = Math.abs(remaining).toFixed(2);
 
