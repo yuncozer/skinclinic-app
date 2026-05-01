@@ -1,10 +1,9 @@
 'use server';
 
 import { createClient } from '@/lib/superbase-server';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export async function signIn(email: string, password: string) {
+export async function signIn(email: string, password: string): Promise<boolean> {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -16,7 +15,7 @@ export async function signIn(email: string, password: string) {
     throw new Error(error.message);
   }
 
-  redirect('/');
+  return true;
 }
 
 export async function signOutClient() {
