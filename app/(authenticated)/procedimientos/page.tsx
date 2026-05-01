@@ -1,30 +1,20 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import ProcedimientosClient from './ProcedimientosClient';
+import { getUserByEmail } from '@/actions/users';
+import { createClient } from '@/lib/superbase-server';
+import { redirect } from 'next/navigation';
 
 export default async function ProcedimientosPage() {
-  const cookieStore = await cookies();
+  const supabase = await createClient();
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll() {},
-      },
-    }
-  );
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/login');
+  }
 
-  const { data: appUser } = await supabase
-    .from('app_users')
-    .select('name, role')
-    .eq('id', user?.id)
-    .single();
+  const appUser = await getUserByEmail(user.email!);
 
   return <ProcedimientosClient user={{ role: appUser?.role || 'user', name: appUser?.name || 'Usuario' }} />;
 }

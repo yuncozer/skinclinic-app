@@ -8,7 +8,7 @@ import {
   deleteStandardProcedure,
   type StandardProcedure 
 } from '@/actions/standardProcedures';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Search } from 'lucide-react';
 
 type User = {
   name: string;
@@ -25,8 +25,12 @@ export default function ProcedimientosClient({ user }: { user: User }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', default_price: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const canEdit = user.role === 'super_admin' || user.role === 'admin';
+  const filteredProcedures = searchTerm
+    ? procedures.filter(p => normalizeText(p.name).includes(normalizeText(searchTerm)))
+    : procedures;
 
   useEffect(() => {
     loadProcedures();
@@ -35,6 +39,17 @@ export default function ProcedimientosClient({ user }: { user: User }) {
   function showToast(type: 'success' | 'error', message: string) {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3000);
+  }
+
+  function normalizeText(text: string): string {
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function isDuplicateName(name: string, excludeId?: string): boolean {
+    const normalizedName = normalizeText(name);
+    return procedures.some(p => 
+      normalizeText(p.name) === normalizedName && p.id !== excludeId
+    );
   }
 
   async function loadProcedures() {
@@ -52,6 +67,10 @@ export default function ProcedimientosClient({ user }: { user: User }) {
     e.preventDefault();
     if (!form.name.trim() || !form.default_price) {
       showToast('error', 'Todos los campos son requeridos');
+      return;
+    }
+    if (isDuplicateName(form.name.trim(), editingId || undefined)) {
+      showToast('error', 'Ya existe un procedimiento con ese nombre');
       return;
     }
     setSubmitting(true);
@@ -127,13 +146,25 @@ export default function ProcedimientosClient({ user }: { user: User }) {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-slate-800">Procedimientos Estándar</h1>
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn-primary flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Agregar
-          </button>
+          <div className="flex gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Agregar
+            </button>
+          </div>
         </div>
 
         {showForm && (
@@ -198,7 +229,7 @@ export default function ProcedimientosClient({ user }: { user: User }) {
                 </tr>
               </thead>
               <tbody>
-                {procedures.map(proc => (
+                {filteredProcedures.map(proc => (
                   <tr key={proc.id} className="border-b border-slate-100">
                     <td className="px-4 py-3 text-sm text-slate-800">{proc.name}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">${proc.default_price.toFixed(2)}</td>

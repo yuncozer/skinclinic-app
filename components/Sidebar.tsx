@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, User, Heart, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, Users, User, Heart, Syringe } from 'lucide-react';
 
 type User = {
   name: string;
@@ -24,14 +24,14 @@ const menuItems = [
   {
     label: 'Procedimientos',
     href: '/procedimientos',
-    icon: Stethoscope,
+    icon: Syringe,
     roles: ['super_admin', 'admin'],
   },
   {
     label: 'Usuarios',
     href: '/usuarios',
     icon: Users,
-    roles: ['super_admin'],
+    roles: ['super_admin', 'admin'],
   },
 ];
 
