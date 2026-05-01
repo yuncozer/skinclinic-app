@@ -86,21 +86,21 @@ export default function PerfilClient({ user }: { user: User }) {
       )}
 
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold text-slate-800 mb-8">Mi Perfil</h1>
+        <h1 className="text-2xl font-semibold text-[#4d443c] mb-8">Mi Perfil</h1>
 
         <div className="space-y-8">
           <div className="card p-6">
-            <h2 className="text-lg font-medium text-slate-800 mb-4">Información Personal</h2>
+            <h2 className="text-lg font-medium text-[#4d443c] mb-4">Información Personal</h2>
 
-            <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
-              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
+            <div className="flex items-center gap-4 mb-6 p-4 bg-[#f8f7f5] rounded-lg">
+              <div className="w-16 h-16 bg-[#A69686] rounded-full flex items-center justify-center">
                 <span className="text-white text-2xl font-semibold">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div>
-                <p className="text-sm text-slate-500">Rol: {roleLabels[user.role]}</p>
-                <p className="text-sm text-slate-500">{user.email}</p>
+                <p className="text-sm text-[#8a7d6d]">Rol: {roleLabels[user.role]}</p>
+                <p className="text-sm text-[#8a7d6d]">{user.email}</p>
               </div>
             </div>
 
@@ -123,7 +123,7 @@ export default function PerfilClient({ user }: { user: User }) {
           </div>
 
           <div className="card p-6">
-            <h2 className="text-lg font-medium text-slate-800 mb-4">Cambiar Contraseña</h2>
+            <h2 className="text-lg font-medium text-[#4d443c] mb-4">Cambiar Contraseña</h2>
 
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div>

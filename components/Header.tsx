@@ -39,7 +39,7 @@ export default function Header({ user }: { user: User }) {
           </div>
         </div>
       )}
-      <header className="h-16 bg-white border-b border-[#d5cec6] flex items-center justify-between px-6">
+      <header className="h-20 bg-white border-b border-[#d5cec6] flex items-center justify-between px-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#A69686] rounded-full flex items-center justify-center">
             <span className="text-white font-semibold">

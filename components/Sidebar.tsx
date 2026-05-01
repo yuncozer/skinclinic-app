@@ -44,7 +44,7 @@ export default function Sidebar({ user }: Props) {
 
   return (
     <aside className="w-64 bg-white border-r border-[#d5cec6] min-h-screen">
-      <div className="p-4 border-b border-[#d5cec6]">
+      <div className="h-20 p-4 border-b border-[#d5cec6]">
         <Link href="/" className="flex items-center gap-3">
           <div className="w-9 h-9 bg-[#A69686] rounded-lg flex items-center justify-center">
             <span className="text-white font-semibold text-lg">S</span>

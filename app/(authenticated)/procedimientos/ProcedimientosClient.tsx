@@ -126,8 +126,8 @@ export default function ProcedimientosClient({ user }: { user: User }) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-slate-800">Acceso Denegado</h1>
-          <p className="text-slate-500 mt-2">No tienes permisos para acceder a esta sección.</p>
+          <h1 className="text-2xl font-semibold text-[#4d443c]">Acceso Denegado</h1>
+          <p className="text-[#8a7d6d] mt-2">No tienes permisos para acceder a esta sección.</p>
         </div>
       </div>
     );
@@ -145,10 +145,10 @@ export default function ProcedimientosClient({ user }: { user: User }) {
 
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-slate-800">Procedimientos Estándar</h1>
+          <h1 className="text-2xl font-semibold text-[#4d443c]">Procedimientos Estándar</h1>
           <div className="flex gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7d6d]" />
               <input
                 type="text"
                 placeholder="Buscar..."
@@ -170,10 +170,10 @@ export default function ProcedimientosClient({ user }: { user: User }) {
         {showForm && (
           <div className="card p-6 mb-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium text-slate-800">
+              <h2 className="text-lg font-medium text-[#4d443c]">
                 {editingId ? 'Editar Procedimiento' : 'Nuevo Procedimiento'}
               </h2>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600">
+              <button onClick={closeForm} className="text-[#8a7d6d] hover:text-[#8a7d6d]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -215,24 +215,24 @@ export default function ProcedimientosClient({ user }: { user: User }) {
 
         <div className="card overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-slate-500">Cargando...</div>
+            <div className="p-8 text-center text-[#8a7d6d]">Cargando...</div>
           ) : procedures.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">No hay procedimientos registrados</div>
+            <div className="p-8 text-center text-[#8a7d6d]">No hay procedimientos registrados</div>
           ) : (
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Nombre</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Precio Base</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Estado</th>
-                  <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Acciones</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8a7d6d]">Nombre</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8a7d6d]">Precio Base</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8a7d6d]">Estado</th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-[#8a7d6d]">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProcedures.map(proc => (
                   <tr key={proc.id} className="border-b border-slate-100">
-                    <td className="px-4 py-3 text-sm text-slate-800">{proc.name}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">${proc.default_price.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-[#4d443c]">{proc.name}</td>
+                    <td className="px-4 py-3 text-sm text-[#8a7d6d]">${proc.default_price.toFixed(2)}</td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         proc.active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -243,7 +243,7 @@ export default function ProcedimientosClient({ user }: { user: User }) {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => openEdit(proc)}
-                        className="text-slate-600 hover:text-slate-800 mr-3"
+                        className="text-[#8a7d6d] hover:text-[#4d443c] mr-3"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
