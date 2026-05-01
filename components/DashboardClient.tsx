@@ -136,7 +136,7 @@ export default function Dashboard({ user }: { user: User }) {
   return (
     <>
       {toast && (
-        <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+        <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${toast.type === 'success' ? 'bg-[#059669]' : 'bg-red-600'
           } text-white`}>
           {toast.message}
         </div>
@@ -273,7 +273,7 @@ function PatientSection({
   return (
     <div className="bg-white rounded-lg shadow-sm p-5">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-700">Pacientes</h2>
+        <h2 className="text-lg font-medium text-[#4d443c]">Pacientes</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="text-sm text-blue-600 hover:underline"
@@ -287,12 +287,12 @@ function PatientSection({
           placeholder="Buscar por nombre, cedula o telefono..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
+          className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686] text-sm"
         />
         <select
           value={procedureFilter}
           onChange={e => setProcedureFilter(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
+          className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686] text-sm"
         >
           <option value="">Todos los procedimientos</option>
           {uniqueProcedures.map(pr => (
@@ -300,18 +300,18 @@ function PatientSection({
           ))}
         </select>
         {(searchTerm || procedureFilter) && (
-          <p className="text-xs text-gray-500">{patients.length} paciente(s) encontrado(s)</p>
+          <p className="text-xs text-[#8a7d6d]">{patients.length} paciente(s) encontrado(s)</p>
         )}
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
-          <input placeholder="Nombre completo" value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
-          <input placeholder="Cedula" value={form.id_number} onChange={e => setForm({ ...form, id_number: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
-          <input placeholder="Telefono" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
-          <input placeholder="Email (opcional)" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
-          <input placeholder="Direccion (opcional)" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
-          <button type="submit" disabled={submitting} className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50">
+        <form onSubmit={handleSubmit} className="space-y-3 mb-6 p-4 bg-[#f8f7f5] rounded-lg">
+          <input placeholder="Nombre completo" value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" required />
+          <input placeholder="Cedula" value={form.id_number} onChange={e => setForm({ ...form, id_number: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" required />
+          <input placeholder="Telefono" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" required />
+          <input placeholder="Email (opcional)" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" />
+          <input placeholder="Direccion (opcional)" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" />
+          <button type="submit" disabled={submitting} className="w-full bg-[#A69686] text-white py-2 rounded-md hover:bg-[#8a7d6d] disabled:opacity-50">
             {submitting ? 'Agregando...' : 'Agregar Paciente'}
           </button>
         </form>
@@ -321,28 +321,28 @@ function PatientSection({
         {(loading || loadingSearch) ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-500">Buscando...</span>
+            <span className="ml-3 text-[#8a7d6d]">Buscando...</span>
           </div>
         ) : patients.length === 0 ? (
-          <p className="text-gray-500 text-sm">No hay pacientes</p>
+          <p className="text-[#8a7d6d] text-sm">No hay pacientes</p>
         ) : (
           <ul className="space-y-2">
             {patients.map(p => (
-              <li key={p.id} className={`p-3 rounded-md cursor-pointer border ${selectedPatient?.id === p.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+              <li key={p.id} className={`p-3 rounded-md cursor-pointer border ${selectedPatient?.id === p.id ? 'border-[#A69686] bg-[#f8f7f5]' : 'border-[#d5cec6] hover:bg-[#f8f7f5]'}`}>
                 {editingId === p.id ? (
                   <div className="space-y-2">
                     <input value={editForm.full_name || ''} onChange={e => setEditForm({ ...editForm, full_name: e.target.value })} className="w-full px-2 py-1 border rounded text-sm" placeholder="Nombre" />
                     <input value={editForm.phone || ''} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} className="w-full px-2 py-1 border rounded text-sm" placeholder="Telefono" />
                     <input value={editForm.email || ''} onChange={e => setEditForm({ ...editForm, email: e.target.value })} className="w-full px-2 py-1 border rounded text-sm" placeholder="Email" />
                     <div className="flex gap-2">
-                      <button onClick={() => handleUpdate(p.id)} disabled={submitting} className="flex-1 bg-green-600 text-white py-1 rounded text-sm hover:bg-green-700">Guardar</button>
-                      <button onClick={() => setEditingId(null)} className="flex-1 bg-gray-400 text-white py-1 rounded text-sm hover:bg-gray-500">Cancelar</button>
+                      <button onClick={() => handleUpdate(p.id)} disabled={submitting} className="flex-1 bg-[#059669] text-white py-1 rounded text-sm hover:bg-[#047857]">Guardar</button>
+                      <button onClick={() => setEditingId(null)} className="flex-1 bg-[#8a7d6d] text-white py-1 rounded text-sm hover:bg-[#f8f7f5]0">Cancelar</button>
                     </div>
                   </div>
                 ) : (
                   <div onClick={() => onSelect(p)}>
-                    <div className="font-medium text-gray-800">{p.full_name}</div>
-                    <div className="text-xs text-gray-500">C.I: {p.id_number} | {p.phone}</div>
+                    <div className="font-medium text-[#4d443c]">{p.full_name}</div>
+                    <div className="text-xs text-[#8a7d6d]">C.I: {p.id_number} | {p.phone}</div>
                     {selectedPatient?.id === p.id && (
                       <div className="mt-2 flex gap-2 pt-2 border-t">
                         <button onClick={(e) => { e.stopPropagation(); startEdit(p); }} className="text-xs text-blue-600 hover:underline">Editar</button>
@@ -537,12 +537,12 @@ function ProcedureSection({
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-5">
-      <h2 className="text-lg font-medium text-gray-700 mb-4">Procedimientos</h2>
+      <h2 className="text-lg font-medium text-[#4d443c] mb-4">Procedimientos</h2>
 
       {!selectedPatient ? (
-        <p className="text-gray-500 text-sm mb-4">Selecciona un paciente para ver/agregar procedimientos</p>
+        <p className="text-[#8a7d6d] text-sm mb-4">Selecciona un paciente para ver/agregar procedimientos</p>
       ) : (
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center">
+        <div className="mb-4 p-3 bg-[#f8f7f5] rounded-lg flex justify-between items-center">
           <span className="text-sm text-blue-700 font-medium">Seleccionado: {selectedPatient.full_name}</span>
           {hasDebt ?
             <span className="text-sm text-blue-600">
@@ -554,8 +554,8 @@ function ProcedureSection({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
-        <select value={selectedPatient?.id || ''} onChange={e => { const p = patients.find(pt => pt.id === e.target.value); if (p) onSelectPatient(p); }} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+      <form onSubmit={handleSubmit} className="space-y-3 mb-6 p-4 bg-[#f8f7f5] rounded-lg">
+        <select value={selectedPatient?.id || ''} onChange={e => { const p = patients.find(pt => pt.id === e.target.value); if (p) onSelectPatient(p); }} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]">
           <option value="">Seleccionar Paciente</option>
           {patients.map(p => (<option key={p.id} value={p.id}>{p.full_name}</option>))}
         </select>
@@ -565,7 +565,7 @@ function ProcedureSection({
             <select
               value={form.procedure_name}
               onChange={e => handleSelectProcedure(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]"
             >
               <option value="">Seleccionar Procedimiento</option>
               {standardProcedureNames.map(pr => (
@@ -580,13 +580,13 @@ function ProcedureSection({
               placeholder="Nombre del procedimiento"
               value={customProcedureName}
               onChange={e => setCustomProcedureName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]"
             />
             <button
               type="button"
               onClick={addCustomProcedure}
               disabled={!customProcedureName.trim()}
-              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
+              className="w-full bg-[#059669] text-white py-2 rounded-md hover:bg-[#047857] disabled:opacity-50 text-sm"
             >
               Usar como personalizado
             </button>
@@ -595,17 +595,17 @@ function ProcedureSection({
 
         {form.procedure_name && (
           <>
-            <input type="date" value={form.procedure_date} onChange={e => setForm({ ...form, procedure_date: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
+            <input type="date" value={form.procedure_date} onChange={e => setForm({ ...form, procedure_date: e.target.value })} className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]" required />
             {!isCustomProcedure && standardProcedures.find(p => p.name === form.procedure_name) ? (
               <div className="space-y-1">
-                <label className="text-xs text-gray-500">Precio base: ${standardProcedures.find(p => p.name === form.procedure_name)?.default_price.toFixed(2)}</label>
+                <label className="text-xs text-[#8a7d6d]">Precio base: ${standardProcedures.find(p => p.name === form.procedure_name)?.default_price.toFixed(2)}</label>
                 <input
                   placeholder="Monto total (editable)"
                   type="number"
                   step="0.01"
                   value={form.total_amount || ''}
                   onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]"
                   required
                 />
               </div>
@@ -616,41 +616,41 @@ function ProcedureSection({
                 step="0.01"
                 value={form.total_amount || ''}
                 onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-[#d5cec6] rounded-md focus:ring-2 focus:ring-[#A69686]"
                 required
               />
             )}
           </>
         )}
-        <button type="submit" disabled={submitting || !selectedPatient || !form.procedure_name || !form.procedure_date || !form.total_amount} className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50">
+        <button type="submit" disabled={submitting || !selectedPatient || !form.procedure_name || !form.procedure_date || !form.total_amount} className="w-full bg-[#A69686] text-white py-2 rounded-md hover:bg-[#8a7d6d] disabled:opacity-50">
           {submitting ? 'Agregando...' : 'Agregar Procedimiento'}
         </button>
       </form>
 
       <div className="max-h-96 overflow-y-auto border-t pt-4">
-        {!selectedPatient ? (<p className="text-gray-500 text-sm">Selecciona un paciente</p>) : loadingProcedures ? (
+        {!selectedPatient ? (<p className="text-[#8a7d6d] text-sm">Selecciona un paciente</p>) : loadingProcedures ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-500">Cargando...</span>
+            <span className="ml-3 text-[#8a7d6d]">Cargando...</span>
           </div>
-        ) : procedures.length === 0 ? (<p className="text-gray-500 text-sm">No hay procedimientos</p>) : (
+        ) : procedures.length === 0 ? (<p className="text-[#8a7d6d] text-sm">No hay procedimientos</p>) : (
           <ul className="space-y-3">
             {procedures.map(pr => {
               const remainingAmount = pr.total_amount - (pr.amount_paid || 0);
               const isPaid = remainingAmount <= 0;
               const isOverpaid = remainingAmount < 0;
               return (
-                <li key={pr.id} className="p-3 border border-gray-200 rounded-md text-sm">
+                <li key={pr.id} className="p-3 border border-[#d5cec6] rounded-md text-sm">
                   <div className="flex justify-between items-start">
                     <div
                       className="cursor-pointer flex-1"
                       onClick={() => togglePayments(pr.id)}
                     >
-                      <div className="font-medium text-gray-800">{pr.procedure_name}</div>
-                      <div className="text-xs text-gray-500">{pr.procedure_date}</div>
+                      <div className="font-medium text-[#4d443c]">{pr.procedure_name}</div>
+                      <div className="text-xs text-[#8a7d6d]">{pr.procedure_date}</div>
                       <div className="mt-1 text-xs flex items-center gap-2">
-                        <span className="text-gray-600 font-medium">${pr.total_amount.toFixed(2)}</span>
-                        <span className="text-gray-400">|</span>
+                        <span className="text-[#8a7d6d] font-medium">${pr.total_amount.toFixed(2)}</span>
+                        <span className="text-[#b8aca0]">|</span>
                         <span className="text-green-600">Pagado: ${(pr.amount_paid || 0).toFixed(2)}</span>
                         {isOverpaid ? (
                           <span className="text-green-600 font-medium ml-1">(Saldo a favor: ${Math.abs(remainingAmount).toFixed(2)})</span>
@@ -665,9 +665,9 @@ function ProcedureSection({
                   </div>
 
                   {expandedProcedure === pr.id && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="mt-3 pt-3 border-t border-[#d5cec6]">
                       <div className="mb-3">
-                        <h4 className="text-xs font-medium text-gray-700 mb-2">Agregar Abono</h4>
+                        <h4 className="text-xs font-medium text-[#4d443c] mb-2">Agregar Abono</h4>
                         <div className="grid grid-cols-2 gap-2 mb-2">
                           <input
                             type="number"
@@ -694,7 +694,7 @@ function ProcedureSection({
                         <button
                           onClick={() => handleAddPayment(pr.id)}
                           disabled={submittingPayment || !paymentForm.amount || !paymentForm.payment_date}
-                          className="w-full bg-green-600 text-white py-1 rounded text-sm hover:bg-green-700 disabled:opacity-50"
+                          className="w-full bg-[#059669] text-white py-1 rounded text-sm hover:bg-[#047857] disabled:opacity-50"
                         >
                           {submittingPayment ? 'Agregando...' : 'Agregar Abono'}
                         </button>
@@ -702,14 +702,14 @@ function ProcedureSection({
 
                       {(procedurePayments[pr.id] || []).length > 0 && (
                         <div>
-                          <h4 className="text-xs font-medium text-gray-700 mb-2">Historial de Abonos</h4>
+                          <h4 className="text-xs font-medium text-[#4d443c] mb-2">Historial de Abonos</h4>
                           <ul className="space-y-1">
                             {(procedurePayments[pr.id] || []).map(pay => (
-                              <li key={pay.id} className="flex justify-between items-center text-xs bg-gray-50 p-2 rounded">
+                              <li key={pay.id} className="flex justify-between items-center text-xs bg-[#f8f7f5] p-2 rounded">
                                 <div>
                                   <span className="text-green-600 font-medium">${pay.amount.toFixed(2)}</span>
-                                  <span className="text-gray-400 ml-2">{pay.payment_date}</span>
-                                  {pay.notes && <span className="text-gray-500 ml-1">- {pay.notes}</span>}
+                                  <span className="text-[#b8aca0] ml-2">{pay.payment_date}</span>
+                                  {pay.notes && <span className="text-[#8a7d6d] ml-1">- {pay.notes}</span>}
                                 </div>
                                 <button
                                   onClick={() => handleDeletePayment(pay.id, pr.id)}
