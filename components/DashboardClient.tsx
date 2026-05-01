@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { 
-  getPatients, createPatient, updatePatient, deletePatient, 
-  type Patient, type CreatePatientInput, type UpdatePatientInput 
+import {
+  getPatients, createPatient, updatePatient, deletePatient,
+  type Patient, type CreatePatientInput, type UpdatePatientInput
 } from '@/actions/patients';
-import { 
+import {
   getProceduresByPatient, createProcedure, deleteProcedure,
   type Procedure, type CreateProcedureInput
 } from '@/actions/procedures';
-import { 
+import {
   getPaymentsByProcedure, createPayment, deletePayment,
   type Payment, type CreatePaymentInput
 } from '@/actions/payments';
@@ -102,11 +102,11 @@ export default function Dashboard({ user }: { user: User }) {
 
   const filteredPatients = useMemo(() => {
     let result = patients;
-    
+
     if (searchTerm) {
       setLoadingSearch(true);
       const term = searchTerm.toLowerCase();
-      result = result.filter(p => 
+      result = result.filter(p =>
         p.full_name.toLowerCase().includes(term) ||
         p.id_number.toLowerCase().includes(term) ||
         p.phone.includes(term)
@@ -131,53 +131,52 @@ export default function Dashboard({ user }: { user: User }) {
   return (
     <>
       {toast && (
-        <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
-          toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-        } text-white`}>
+        <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          } text-white`}>
           {toast.message}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PatientSection 
-            patients={filteredPatients} 
-            selectedPatient={selectedPatient}
-            onSelect={setSelectedPatient}
-            onCreated={loadPatients}
-            onUpdated={loadPatients}
-            onDeleted={loadPatients}
-            loading={loading}
-            loadingSearch={loadingSearch}
-            showToast={showToast}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            procedureFilter={procedureFilter}
-            setProcedureFilter={setProcedureFilter}
-            allProcedures={allProcedures}
-            role={user.role}
-          />
-          
-          <ProcedureSection 
-            standardProcedures={standardProcedures}
-            patients={patients}
-            selectedPatient={selectedPatient}
-            procedures={procedures}
-            loadingProcedures={loadingProcedures}
-            onSelectPatient={setSelectedPatient}
-            onCreated={() => selectedPatient && loadProcedures(selectedPatient.id)}
-            onDeleted={() => selectedPatient && loadProcedures(selectedPatient.id)}
-            showToast={showToast}
-            role={user.role}
-          />
-        </div>
-      </>
-    );
+        <PatientSection
+          patients={filteredPatients}
+          selectedPatient={selectedPatient}
+          onSelect={setSelectedPatient}
+          onCreated={loadPatients}
+          onUpdated={loadPatients}
+          onDeleted={loadPatients}
+          loading={loading}
+          loadingSearch={loadingSearch}
+          showToast={showToast}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          procedureFilter={procedureFilter}
+          setProcedureFilter={setProcedureFilter}
+          allProcedures={allProcedures}
+          role={user.role}
+        />
+
+        <ProcedureSection
+          standardProcedures={standardProcedures}
+          patients={patients}
+          selectedPatient={selectedPatient}
+          procedures={procedures}
+          loadingProcedures={loadingProcedures}
+          onSelectPatient={setSelectedPatient}
+          onCreated={() => selectedPatient && loadProcedures(selectedPatient.id)}
+          onDeleted={() => selectedPatient && loadProcedures(selectedPatient.id)}
+          showToast={showToast}
+          role={user.role}
+        />
+      </div>
+    </>
+  );
 }
 
-function PatientSection({ 
-  patients, 
-  selectedPatient, 
-  onSelect, 
+function PatientSection({
+  patients,
+  selectedPatient,
+  onSelect,
   onCreated,
   onUpdated,
   onDeleted,
@@ -269,7 +268,7 @@ function PatientSection({
     <div className="bg-white rounded-lg shadow-sm p-5">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-medium text-gray-700">Pacientes</h2>
-        <button 
+        <button
           onClick={() => setShowForm(!showForm)}
           className="text-sm text-blue-600 hover:underline"
         >
@@ -278,13 +277,13 @@ function PatientSection({
       </div>
 
       <div className="mb-4 space-y-2">
-        <input 
+        <input
           placeholder="Buscar por nombre, cedula o telefono..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
         />
-        <select 
+        <select
           value={procedureFilter}
           onChange={e => setProcedureFilter(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
@@ -298,7 +297,7 @@ function PatientSection({
           <p className="text-xs text-gray-500">{patients.length} paciente(s) encontrado(s)</p>
         )}
       </div>
-      
+
       {showForm && (
         <form onSubmit={handleSubmit} className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
           <input placeholder="Nombre completo" value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
@@ -396,10 +395,10 @@ function ProcedureSection({
     } else {
       setIsCustomProcedure(false);
       const proc = standardProcedures.find(p => p.name === value);
-      setForm({ 
-        procedure_name: value, 
-        procedure_date: form.procedure_date, 
-        total_amount: proc ? proc.default_price : 0 
+      setForm({
+        procedure_name: value,
+        procedure_date: form.procedure_date,
+        total_amount: proc ? proc.default_price : 0
       });
     }
   }
@@ -454,14 +453,55 @@ function ProcedureSection({
   }
 
   async function handleAddPayment(procedureId: string) {
+    if (!selectedPatient) return;
     setSubmittingPayment(true);
     try {
+      const currentProcedure = procedures.find(p => p.id === procedureId);
+      if (!currentProcedure) throw new Error('Procedimiento no encontrado');
+      
+      const currentPaid = currentProcedure.amount_paid || 0;
+      const remainingBefore = currentProcedure.total_amount - currentPaid;
+      
       await createPayment({ ...paymentForm, procedure_id: procedureId });
+      
+      const allPayments = await getPaymentsByProcedure(procedureId);
+      const newTotalPaid = allPayments.reduce((sum, p) => sum + Number(p.amount), 0);
+      const newRemaining = currentProcedure.total_amount - newTotalPaid;
+      
+      if (newRemaining < 0) {
+        const excess = Math.abs(newRemaining);
+        const otherProcedures = procedures.filter(p => p.id !== procedureId && (p.total_amount - (p.amount_paid || 0)) > 0);
+        
+        let remainingExcess = excess;
+        for (const proc of otherProcedures) {
+          if (remainingExcess <= 0) break;
+          
+          const procRemaining = proc.total_amount - (proc.amount_paid || 0);
+          const amountToApply = Math.min(remainingExcess, procRemaining);
+          
+          if (amountToApply > 0) {
+            await createPayment({
+              procedure_id: proc.id,
+              amount: amountToApply,
+              payment_date: paymentForm.payment_date,
+              notes: `Abono automático de excedente`
+            });
+            remainingExcess -= amountToApply;
+          }
+        }
+        
+        if (remainingExcess > 0) {
+          showToast('success', `Abono de $${paymentForm.amount.toFixed(2)} aplicado. Excedente de $${remainingExcess.toFixed(2)} registrado como saldo a favor`);
+        } else {
+          showToast('success', `Abono aplicado. El excedente se distribuyó automáticamente a otros procedimientos`);
+        }
+      } else {
+        showToast('success', 'Abono agregado exitosamente');
+      }
+      
       setPaymentForm({ amount: 0, payment_date: '', notes: '' });
-      const payments = await getPaymentsByProcedure(procedureId);
-      setProcedurePayments(prev => ({ ...prev, [procedureId]: payments }));
+      setProcedurePayments(prev => ({ ...prev, [procedureId]: allPayments }));
       onCreated();
-      showToast('success', 'Abono agregado exitosamente');
     } catch (err) {
       showToast('error', err instanceof Error ? err.message : 'Error al agregar abono');
     } finally {
@@ -485,19 +525,25 @@ function ProcedureSection({
   const total = procedures.reduce((acc, pr) => acc + pr.total_amount, 0);
   const paid = procedures.reduce((acc, pr) => acc + (pr.amount_paid || 0), 0);
   const remaining = total - paid;
+  const hasDebt = remaining > 0;
+  const positiveValue = Math.abs(remaining).toFixed(2);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-5">
       <h2 className="text-lg font-medium text-gray-700 mb-4">Procedimientos</h2>
-      
+
       {!selectedPatient ? (
         <p className="text-gray-500 text-sm mb-4">Selecciona un paciente para ver/agregar procedimientos</p>
       ) : (
         <div className="mb-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center">
           <span className="text-sm text-blue-700 font-medium">Seleccionado: {selectedPatient.full_name}</span>
-          <span className="text-sm text-blue-600">
-            Saldo: <span className="text-red-600 font-medium">${remaining.toFixed(2)}</span>
-          </span>
+          {hasDebt ?
+            <span className="text-sm text-blue-600">
+              Deuda: <span className="text-red-600 font-medium">${positiveValue}</span>
+            </span>
+            : <span className="text-sm text-blue-600">
+              Saldo a favor: <span className="text-green-600 font-medium">${positiveValue}</span>
+            </span>}
         </div>
       )}
 
@@ -506,11 +552,11 @@ function ProcedureSection({
           <option value="">Seleccionar Paciente</option>
           {patients.map(p => (<option key={p.id} value={p.id}>{p.full_name}</option>))}
         </select>
-        
+
         {!isCustomProcedure ? (
           <div className="space-y-2">
-            <select 
-              value={form.procedure_name} 
+            <select
+              value={form.procedure_name}
               onChange={e => handleSelectProcedure(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
@@ -523,13 +569,13 @@ function ProcedureSection({
           </div>
         ) : (
           <div className="space-y-2">
-            <input 
+            <input
               placeholder="Nombre del procedimiento"
               value={customProcedureName}
               onChange={e => setCustomProcedureName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             />
-            <button 
+            <button
               type="button"
               onClick={addCustomProcedure}
               disabled={!customProcedureName.trim()}
@@ -539,32 +585,32 @@ function ProcedureSection({
             </button>
           </div>
         )}
-        
+
         {form.procedure_name && (
           <>
             <input type="date" value={form.procedure_date} onChange={e => setForm({ ...form, procedure_date: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
             {!isCustomProcedure && standardProcedures.find(p => p.name === form.procedure_name) ? (
               <div className="space-y-1">
                 <label className="text-xs text-gray-500">Precio base: ${standardProcedures.find(p => p.name === form.procedure_name)?.default_price.toFixed(2)}</label>
-                <input 
-                  placeholder="Monto total (editable)" 
-                  type="number" 
-                  step="0.01" 
-                  value={form.total_amount || ''} 
-                  onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })} 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
-                  required 
+                <input
+                  placeholder="Monto total (editable)"
+                  type="number"
+                  step="0.01"
+                  value={form.total_amount || ''}
+                  onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  required
                 />
               </div>
             ) : (
-              <input 
-                placeholder="Monto total" 
-                type="number" 
-                step="0.01" 
-                value={form.total_amount || ''} 
-                onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })} 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
-                required 
+              <input
+                placeholder="Monto total"
+                type="number"
+                step="0.01"
+                value={form.total_amount || ''}
+                onChange={e => setForm({ ...form, total_amount: parseFloat(e.target.value) || 0 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             )}
           </>
@@ -589,7 +635,7 @@ function ProcedureSection({
               return (
                 <li key={pr.id} className="p-3 border border-gray-200 rounded-md text-sm">
                   <div className="flex justify-between items-start">
-                    <div 
+                    <div
                       className="cursor-pointer flex-1"
                       onClick={() => togglePayments(pr.id)}
                     >
@@ -616,29 +662,29 @@ function ProcedureSection({
                       <div className="mb-3">
                         <h4 className="text-xs font-medium text-gray-700 mb-2">Agregar Abono</h4>
                         <div className="grid grid-cols-2 gap-2 mb-2">
-                          <input 
-                            type="number" 
-                            step="0.01" 
+                          <input
+                            type="number"
+                            step="0.01"
                             placeholder="Monto"
                             value={paymentForm.amount || ''}
                             onChange={e => setPaymentForm({ ...paymentForm, amount: parseFloat(e.target.value) || 0 })}
                             className="px-2 py-1 border rounded text-sm"
                           />
-                          <input 
-                            type="date" 
+                          <input
+                            type="date"
                             value={paymentForm.payment_date}
                             onChange={e => setPaymentForm({ ...paymentForm, payment_date: e.target.value })}
                             className="px-2 py-1 border rounded text-sm"
                           />
                         </div>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           placeholder="Notas (opcional)"
                           value={paymentForm.notes}
                           onChange={e => setPaymentForm({ ...paymentForm, notes: e.target.value })}
                           className="w-full px-2 py-1 border rounded text-sm mb-2"
                         />
-                        <button 
+                        <button
                           onClick={() => handleAddPayment(pr.id)}
                           disabled={submittingPayment || !paymentForm.amount || !paymentForm.payment_date}
                           className="w-full bg-green-600 text-white py-1 rounded text-sm hover:bg-green-700 disabled:opacity-50"
@@ -658,7 +704,7 @@ function ProcedureSection({
                                   <span className="text-gray-400 ml-2">{pay.payment_date}</span>
                                   {pay.notes && <span className="text-gray-500 ml-1">- {pay.notes}</span>}
                                 </div>
-                                <button 
+                                <button
                                   onClick={() => handleDeletePayment(pay.id, pr.id)}
                                   className="text-red-500 hover:text-red-700"
                                 >
