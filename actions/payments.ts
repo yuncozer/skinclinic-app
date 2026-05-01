@@ -9,6 +9,7 @@ export type Payment = {
   amount: number;
   payment_date: string;
   notes: string | null;
+  is_auto: boolean;
   created_at: string;
 };
 
@@ -17,6 +18,7 @@ export type CreatePaymentInput = {
   amount: number;
   payment_date: string;
   notes?: string;
+  is_auto?: boolean;
 };
 
 export async function getTotalPaymentsByPatient(patientId: string): Promise<number> {
@@ -32,7 +34,8 @@ export async function getTotalPaymentsByPatient(patientId: string): Promise<numb
   const { data: payments, error: paymentsError } = await supabase
     .from('payments')
     .select('amount')
-    .in('procedure_id', procedureIds);
+    .in('procedure_id', procedureIds)
+    .eq('is_auto', false);
   
   if (paymentsError || !payments) return 0;
   

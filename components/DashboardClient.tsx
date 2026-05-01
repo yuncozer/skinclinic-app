@@ -490,7 +490,8 @@ function ProcedureSection({
               procedure_id: proc.id,
               amount: amountToApply,
               payment_date: paymentForm.payment_date,
-              notes: `Abono automático de excedente`
+              notes: `Abono automático de excedente`,
+              is_auto: true
             });
             remainingExcess -= amountToApply;
           }

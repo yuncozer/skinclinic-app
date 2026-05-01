@@ -34,6 +34,7 @@ CREATE TABLE payments (
     amount NUMERIC NOT NULL,
     payment_date DATE NOT NULL,
     notes TEXT,
+    is_auto BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
