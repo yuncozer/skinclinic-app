@@ -464,12 +464,10 @@ function ProcedureSection({
       
       await createPayment({ ...paymentForm, procedure_id: procedureId });
       
-      const allPayments = await getPaymentsByProcedure(procedureId);
-      const newTotalPaid = allPayments.reduce((sum, p) => sum + Number(p.amount), 0);
-      const newRemaining = currentProcedure.total_amount - newTotalPaid;
+      const newTotalPaid = currentPaid + paymentForm.amount;
+      const excess = newTotalPaid - currentProcedure.total_amount;
       
-      if (newRemaining < 0) {
-        const excess = Math.abs(newRemaining);
+      if (excess > 0) {
         const otherProcedures = procedures.filter(p => p.id !== procedureId && (p.total_amount - (p.amount_paid || 0)) > 0);
         
         let remainingExcess = excess;
@@ -491,7 +489,7 @@ function ProcedureSection({
         }
         
         if (remainingExcess > 0) {
-          showToast('success', `Abono de $${paymentForm.amount.toFixed(2)} aplicado. Excedente de $${remainingExcess.toFixed(2)} registrado como saldo a favor`);
+          showToast('success', `Abono aplicado. Excedente de $${remainingExcess.toFixed(2)} registrado como saldo a favor`);
         } else {
           showToast('success', `Abono aplicado. El excedente se distribuyó automáticamente a otros procedimientos`);
         }
@@ -500,6 +498,7 @@ function ProcedureSection({
       }
       
       setPaymentForm({ amount: 0, payment_date: '', notes: '' });
+      const allPayments = await getPaymentsByProcedure(procedureId);
       setProcedurePayments(prev => ({ ...prev, [procedureId]: allPayments }));
       onCreated();
     } catch (err) {
